@@ -1,0 +1,28 @@
+We describe steps to create docker image of mongodb we use for tests
+
+Prerequisites : 
+Docker 
+
+
+Steps : 
+1. Run the following command to start athaty_mongo container : 
+
+sudo docker run -d --rm --name athaty_mongo -p 27017:27017 -v mongodbdata:/data/db mongo
+
+. docker run : to run a container based on an image
+. -d : run container detached in background 
+. --rm : automatically remove container if it exists
+. --name : name of container
+. -p : map container port to host port (27017 --> 27017)
+. -v : to specify a volume to not lose data after stopping container (volume_name:volume_mount)
+. mongo : name of docker image
+
+
+2. Run the following command to check if container was successfully started 
+
+docker ps
+
+3. (Optional) Install MongoDB extension in VS Code to manipulate databases, and then add connection using Connection String : "mongodb://localhost:27017" 
+
+NB : Database can be manually created using the MongoDB extension in VS Code or directly through first POST http request
+

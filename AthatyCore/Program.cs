@@ -1,3 +1,4 @@
+using AthatyCore.Repositories;
 using AthatyCore.Settings;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
@@ -5,9 +6,11 @@ using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
+/* Dependencies Injection */
 // Add services to the container.
-
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => {
+    options.SuppressAsyncSuffixInActionNames = false;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -28,8 +31,15 @@ builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
     return new MongoClient(mongoDBSettings.ConnectionToken);
 });
 
+//Injecting Item Repository used for this API (MongoDBRepository)
+
+builder.Services.AddSingleton<IItemRepository, MongoDBItemRepository>();
+builder.Services.AddSingleton<ICategoryRepository, MongoDBCategoryRepository>();
+
 var app = builder.Build();
 
+
+/* Middlewares */
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
