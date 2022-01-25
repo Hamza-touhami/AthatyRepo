@@ -17,7 +17,6 @@ if (app.Environment.IsDevelopment())
 }
 
 //TEST
-
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

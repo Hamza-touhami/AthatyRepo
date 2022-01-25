@@ -208,31 +208,28 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\G521069\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+    "/Users/mac/.nuget/packages/": {},
+    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\G521069\\OneDrive - myidemia\\Bureau\\AthatyRepo\\AthatyCore\\AthatyCore.csproj",
+      "projectUniqueName": "/Users/mac/Documents/GitHub/AthatyRepo/AthatyCore/AthatyCore.csproj",
       "projectName": "AthatyCore",
-      "projectPath": "c:\\Users\\G521069\\OneDrive - myidemia\\Bureau\\AthatyRepo\\AthatyCore\\AthatyCore.csproj",
-      "packagesPath": "C:\\Users\\G521069\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\G521069\\OneDrive - myidemia\\Bureau\\AthatyRepo\\AthatyCore\\obj\\",
+      "projectPath": "/Users/mac/Documents/GitHub/AthatyRepo/AthatyCore/AthatyCore.csproj",
+      "packagesPath": "/Users/mac/.nuget/packages/",
+      "outputPath": "/Users/mac/Documents/GitHub/AthatyRepo/AthatyCore/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\"
+        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\G521069\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "/Users/mac/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -274,7 +271,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.101/RuntimeIdentifierGraph.json"
       }
     }
   }
