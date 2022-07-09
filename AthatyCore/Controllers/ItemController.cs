@@ -79,7 +79,7 @@ namespace AthatyCore.Controllers
         {
             var existingItem = await itemRepository.GetItemAsync(id);
             if(existingItem is null)
-            {
+            {   
                 return NotFound();
             }
 

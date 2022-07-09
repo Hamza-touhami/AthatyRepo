@@ -1,4 +1,7 @@
+using AthatyCore.CustomMiddlewares;
+using AthatyCore.Helpers;
 using AthatyCore.Repositories;
+using AthatyCore.Services;
 using AthatyCore.Settings;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
@@ -8,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 /* Dependencies Injection */
 // Add services to the container.
+builder.Services.AddCors();
 builder.Services.AddControllers(options => {
     options.SuppressAsyncSuffixInActionNames = false;
 });
@@ -36,6 +40,16 @@ builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
 builder.Services.AddSingleton<IItemRepository, MongoDBItemRepository>();
 builder.Services.AddSingleton<ICategoryRepository, MongoDBCategoryRepository>();
 
+
+//Authentication services
+{
+    //Configure strongly typed AuthenticationSettings
+    builder.Services.Configure<AuthenticationSettings>(builder.Configuration.GetSection("AuthenticationSettings"));
+
+    //Inject UserService service for authentication
+    builder.Services.AddScoped<IUserService, UserService>();
+}
+
 var app = builder.Build();
 
 
@@ -50,7 +64,14 @@ if (app.Environment.IsDevelopment())
 //TEST
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//app.UseAuthorization();
+// global cors policy
+app.UseCors(x => x
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
+//Do not use Authentication & Authorization built-in middlewares, use custom jwt middleware
+app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
 
