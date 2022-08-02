@@ -48,51 +48,5 @@ namespace AthatyCore.Repositories
             var filter = filterDefinitionBuilder.Eq(existingCategory => existingCategory.Id, category.Id);
             await categoryCollection.ReplaceOneAsync(filter, category);
         }
-
-        public async Task<IEnumerable<Product>> GetProductsAsync(Guid categoryId)
-        {
-            var filter = filterDefinitionBuilder.Eq(Category => Category.Id, categoryId);
-            var category = await categoryCollection.Find(filter).SingleOrDefaultAsync();
-            if(category == null)
-                return null;
-            return category.Products;
-        }
-        public async Task<Product> GetProductAsync(Guid categoryId, Guid productId)
-        {
-            var filter = filterDefinitionBuilder.Eq(Category => Category.Id, categoryId);
-            var category = await categoryCollection.Find(filter).SingleOrDefaultAsync();
-            if(category == null)
-                return null;
-            return category.Products.FirstOrDefault(product => product.Id == productId);
-
-        }
-        public async Task AddProductAsync(Guid categoryId, Product product)
-        {
-            var filter = filterDefinitionBuilder.Eq(Category => Category.Id, categoryId);
-            var category = await categoryCollection.Find(filter).SingleOrDefaultAsync();
-
-            category.Products.Add(product);
-
-            await UpdateCategoryAsync(category);
-        }
-        public async Task UpdateProductAsync(Guid categoryId, Product product)
-        {
-            var filter = filterDefinitionBuilder.Eq(Category => Category.Id, categoryId);
-            var category = await categoryCollection.Find(filter).SingleOrDefaultAsync();
-            
-            var existingProductIndex = category.Products.FindIndex(product => product.Id == product.Id);
-            category.Products[existingProductIndex] = product;
-
-            await UpdateCategoryAsync(category);
-        }
-        public async Task DeleteProductAsync(Guid categoryId, Product product)
-        {
-            var filter = filterDefinitionBuilder.Eq(Category => Category.Id, categoryId);
-            var category = await categoryCollection.Find(filter).SingleOrDefaultAsync();
-            
-            category.Products.RemoveAll(product => product.Id == product.Id);
-
-            await UpdateCategoryAsync(category);
-        }
     }
 }

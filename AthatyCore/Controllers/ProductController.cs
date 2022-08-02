@@ -9,28 +9,28 @@ namespace AthatyCore.Controllers
     [Route("products")]
     public class ProductController : ControllerBase
     {
-        private readonly ICategoryRepository categoryRepository;
+        private readonly IProductRepository productRepository;
 
-        public ProductController(ICategoryRepository categoryRepository)
+        public ProductController(IProductRepository productRepository)
         {
-            this.categoryRepository = categoryRepository;
+            this.productRepository = productRepository;
         }
 
         //GET /items
-        [HttpGet("{categoryId}")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsAsync(Guid categoryId)
+        [HttpGet()]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsAsync(Guid productId)
         {
-            var products = (await categoryRepository.GetProductsAsync(categoryId));
+            var products = (await productRepository.GetProductsAsync());
             if(products is null)
                 return NotFound();
             return AcceptedAtAction(nameof(GetProductsAsync), products.Select(product => product.AsDTO()));  
         }
 
         //GET /items/id=*******
-        [HttpGet("{categoryId}/{productId}")]
-        public async Task<ActionResult<ProductDto>> GetProductAsync(Guid categoryId, Guid productId)
+        [HttpGet("{productId}")]
+        public async Task<ActionResult<ProductDto>> GetProductAsync(Guid productId)
         {
-            var product = (await categoryRepository.GetProductAsync(categoryId, productId));
+            var product = (await productRepository.GetProductAsync(productId));
             if(product is null)
                 return NotFound();
             return product.AsDTO();
@@ -40,7 +40,7 @@ namespace AthatyCore.Controllers
         //Here we return ItemDto although it's a post request, because it's a convention we send back the item that was created
        
         [HttpPost]
-        public async Task<ActionResult<CategoryDto>> CreateProductAsync(CreatedProductDto productDto)
+        public async Task<ActionResult<ProductDto>> CreateProductAsync(CreatedProductDto productDto)
         {
             Product product = new()
             {
@@ -49,15 +49,15 @@ namespace AthatyCore.Controllers
                 CategoryId = productDto.CategoryId
             };
 
-            await categoryRepository.AddProductAsync(productDto.CategoryId, product);
+            await productRepository.AddProductAsync(product);
 
             return CreatedAtAction(nameof(CreateProductAsync), new {id = product.Id}, product.AsDTO());
         }
 
-        [HttpPut("{categoryId}/{productId}")]
-        public async Task<ActionResult> UpdateProductAsync(Guid categoryId, Guid productId, UpdatedProductDto productDto)
+        [HttpPut("{productId}")]
+        public async Task<ActionResult> UpdateProductAsync(Guid productId, UpdatedProductDto productDto)
         {
-            var existingProduct = await categoryRepository.GetProductAsync(categoryId, productId);
+            var existingProduct = await productRepository.GetProductAsync(productId);
 
             if(existingProduct is null)
             {
@@ -69,21 +69,21 @@ namespace AthatyCore.Controllers
                 Name = productDto.Name,
             };
 
-            await categoryRepository.UpdateProductAsync(categoryId, updateProduct);
+            await productRepository.UpdateProductAsync(updateProduct);
             
             return NoContent();
         }
 
-        [HttpDelete("{categoryId}/{productId}")]
-        public async Task<ActionResult> DeleteProductAsync(Guid categoryId, Guid productId)
+        [HttpDelete("{productId}")]
+        public async Task<ActionResult> DeleteProductAsync(Guid productId)
         {
-            var existingProduct = await categoryRepository.GetProductAsync(categoryId, productId);
+            var existingProduct = await productRepository.GetProductAsync(productId);
             if(existingProduct is null)
             {
                 return NotFound();
             }
 
-            await categoryRepository.DeleteProductAsync(categoryId, existingProduct);
+            await productRepository.DeleteProductAsync(existingProduct);
 
             return NoContent();
         }

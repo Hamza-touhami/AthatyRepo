@@ -21,6 +21,7 @@ namespace AthatyCore.Controllers
         public async Task<IEnumerable<CategoryDto>> GetCategoriesAsync()
         {
             var items = (await categoryRepository.GetCategoriesAsync()).Select(category => category.AsDTO());
+            
             return items;
         }
 

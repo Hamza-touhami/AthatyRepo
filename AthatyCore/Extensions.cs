@@ -10,7 +10,7 @@ namespace AthatyCore
             return new ItemDto
             {
                 Id = item.Id,
-                Name = item.Name,
+                Description = item.Description,
                 Price = item.Price,
                 CreationDate = item.CreationDate
             };

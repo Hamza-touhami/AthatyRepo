@@ -6,13 +6,17 @@ using AthatyCore.Settings;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnectionString");
 
 /* Dependencies Injection */
 // Add services to the container.
 builder.Services.AddCors();
-builder.Services.AddControllers(options => {
+builder.Services.AddControllers(options =>
+{
     options.SuppressAsyncSuffixInActionNames = false;
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -28,6 +32,8 @@ BsonSerializer.RegisterSerializer(new GuidSerializer(MongoDB.Bson.BsonType.Strin
 BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(MongoDB.Bson.BsonType.String));
 
 var mongoDBSettings = builder.Configuration.GetSection(nameof(MongoDBSettings)).Get<MongoDBSettings>();
+//Registering DbContext dependency (Dependency Injection)
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
 //Registering IMongoClient dependency (Dependency Injection)
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
@@ -35,10 +41,15 @@ builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
     return new MongoClient(mongoDBSettings.ConnectionToken);
 });
 
+//Injecting Item Repository used for this API (SqlServerRepository)
+builder.Services.AddTransient<IItemRepository, SqlServerItemRepo>();
+builder.Services.AddTransient<ICategoryRepository, SqlServerCategoryRepo>();
+builder.Services.AddTransient<IProductRepository, SqlServerProductRepo>();
+
 //Injecting Item Repository used for this API (MongoDBRepository)
 
-builder.Services.AddSingleton<IItemRepository, MongoDBItemRepository>();
-builder.Services.AddSingleton<ICategoryRepository, MongoDBCategoryRepository>();
+//builder.Services.AddSingleton<IItemRepository, MongoDBItemRepository>();
+//builder.Services.AddSingleton<ICategoryRepository, MongoDBCategoryRepository>();
 
 
 //Authentication services
@@ -62,7 +73,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //TEST
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 //app.UseAuthorization();
 // global cors policy

@@ -42,7 +42,7 @@ namespace AthatyCore.Controllers
         {
             Item item = new()
             {
-                Name = itemDto.Name,
+                Description = itemDto.Description,
                 Price = itemDto.Price,
                 Id = Guid.NewGuid(),
                 CreationDate = DateTimeOffset.UtcNow
@@ -65,7 +65,7 @@ namespace AthatyCore.Controllers
             
             Item updateItem = existingItem with
             {
-                Name = itemDto.Name,
+                Description = itemDto.Description,
                 Price = itemDto.Price
             };
 
