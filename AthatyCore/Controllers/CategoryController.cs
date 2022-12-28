@@ -2,6 +2,7 @@ using AthatyCore.DTOs;
 using AthatyCore.Entities;
 using AthatyCore.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AthatyCore.Controllers
 {
@@ -9,29 +10,38 @@ namespace AthatyCore.Controllers
     [Route("categories")]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryRepository categoryRepository;
+        private readonly ICollectionRepository repository;
 
-        public CategoryController(ICategoryRepository categoryRepository)
+        public CategoryController(ICollectionRepository repository)
         {
-            this.categoryRepository = categoryRepository;
+            this.repository = repository;
         }
 
         //GET /items
         [HttpGet]
-        public async Task<IEnumerable<CategoryDto>> GetCategoriesAsync()
+        public IEnumerable<CategoryDto> GetCategoriesAsync()
         {
-            var items = (await categoryRepository.GetCategoriesAsync()).Select(category => category.AsDTO());
-            return items;
+            var categories = repository.AsQueryable<Category>().Select(x => new CategoryDto
+            {
+                Name = x.Name,
+                Id = x.Id,
+            });  
+            return categories;
         }
 
         //GET /items/id=*******
         [HttpGet("{id}")]
-        public async Task<ActionResult<CategoryDto>> GetCategoryAsync(Guid id)
+        public ActionResult<CategoryDto> GetCategory(string id)
         {
-            var category = (await categoryRepository.GetCategoryAsync(id)).AsDTO();
-            if(category is null)
+            var category = repository.AsQueryable<Category>().FirstOrDefault(x => x.Id == id);
+            if (category is null)
                 return NotFound();
-            return category;
+
+            return new CategoryDto
+            {
+                Name = category.Name,
+                Id = category.Id
+            };
         }
 
         //POST /items
@@ -43,44 +53,46 @@ namespace AthatyCore.Controllers
             Category category = new()
             {
                 Name = categoryDto.Name,
-                Id = Guid.NewGuid(),
             };
 
-            await categoryRepository.AddCategoryAsync(category);
+            await repository.AddAsync(category);
 
-            return CreatedAtAction(nameof(CreateCategoryAsync), new {id = category.Id}, category.AsDTO());
+            return CreatedAtAction(nameof(CreateCategoryAsync), new {id = category.Id}, new Category
+            {
+                Name = category.Name,
+                Id = category.Id
+            });
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCategoryAsync(Guid id, UpdatedCategoryDto itemDto)
+        public async Task<ActionResult> UpdateCategoryAsync(string id, UpdatedCategoryDto itemDto)
         {
-            var existingCategory = await categoryRepository.GetCategoryAsync(id);
+            var existingCategory = repository.AsQueryable<Category>().FirstOrDefault(x => x.Id == id);
 
             if(existingCategory is null)
             {
                 return NotFound();
             }
-            
-            Category updateCategory = existingCategory with
-            {
-                Name = itemDto.Name,
-            };
 
-            await categoryRepository.UpdateCategoryAsync(updateCategory);
+            existingCategory.Name = itemDto.Name;
+
+            await repository.UpdateAsync(existingCategory);
             
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteCategoryAsync(Guid id)
+        public async Task<ActionResult> DeleteCategoryAsync(string id)
         {
-            var existingCategory = await categoryRepository.GetCategoryAsync(id);
-            if(existingCategory is null)
+            var existingCategory = repository.AsQueryable<Category>().FirstOrDefault(x => x.Id == id);
+
+            if (existingCategory is null)
             {
                 return NotFound();
             }
 
-            await categoryRepository.DeleteCategoryAsync(existingCategory);
+
+            await repository.DeleteAsync(existingCategory);
 
             return NoContent();
         }

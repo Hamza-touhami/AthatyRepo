@@ -28,8 +28,9 @@ namespace AthatyCore.Controllers
             return Ok(response);
         }
 
-        [Authorize]
+        
         [HttpGet]
+        [Authorize]
         public IActionResult GetUsers()
         {
             return Ok(userService.GetUsers());

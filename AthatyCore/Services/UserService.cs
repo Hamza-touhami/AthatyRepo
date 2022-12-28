@@ -56,7 +56,7 @@ namespace AthatyCore.Services
 
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
-                Subject = new System.Security.Claims.ClaimsIdentity(new[] { new Claim("id", userId) }),
+                Subject = new System.Security.Claims.ClaimsIdentity(new[] { new Claim("id", userId), new Claim(ClaimTypes.Role, "Admin")}),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

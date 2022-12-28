@@ -2,6 +2,7 @@ using AthatyCore.DTOs;
 using AthatyCore.Entities;
 using AthatyCore.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AthatyCore.Controllers
 {
@@ -9,29 +10,42 @@ namespace AthatyCore.Controllers
     [Route("items")]
     public class ItemController : ControllerBase
     {
-        private readonly IItemRepository itemRepository;
+        private readonly ICollectionRepository repository;
 
-        public ItemController(IItemRepository itemRepository)
+        public ItemController(ICollectionRepository repository)
         {
-            this.itemRepository = itemRepository;
+            this.repository = repository;
         }
 
         //GET /items
         [HttpGet]
-        public async Task<IEnumerable<ItemDto>> GetItemsAsync()
+        public IEnumerable<ItemDto> GetItemsAsync()
         {
-            var items = (await itemRepository.GetItemsAsync()).Select(item => item.AsDTO());
+            var items = repository.AsQueryable<Item>().Select(x => new ItemDto
+            {
+                Price = x.Price,
+                Description = x.Description,
+                CreationDate = x.CreationDate,
+                Id = x.Id
+            });
             return items;
         }
 
         //GET /items/id=*******
         [HttpGet("{id}")]
-        public async Task<ActionResult<ItemDto>> GetItemAsync(Guid id)
+        public ActionResult<ItemDto> GetItem(string id)
         {
-            var item = (await itemRepository.GetItemAsync(id)).AsDTO();
-            if(item is null)
+            var item = repository.AsQueryable<Item>().FirstOrDefault(x => x.Id == id);
+            if (item is null)
                 return NotFound();
-            return item;
+
+            return new ItemDto
+            {
+                Price = item.Price,
+                Description = item.Description,
+                CreationDate = item.CreationDate,
+                Id = item.Id
+            };
         }
 
         //POST /items
@@ -42,48 +56,54 @@ namespace AthatyCore.Controllers
         {
             Item item = new()
             {
-                Name = itemDto.Name,
                 Price = itemDto.Price,
-                Id = Guid.NewGuid(),
-                CreationDate = DateTimeOffset.UtcNow
+                Description = itemDto.Description,
+                ProductId = itemDto.ProductId
             };
 
-            await itemRepository.AddItemAsync(item);
+            await repository.AddAsync(item);
 
-            return CreatedAtAction(nameof(CreateItemAsync), new {id = item.Id}, item.AsDTO());
+            return CreatedAtAction(nameof(CreateItemAsync), new { id = item.Id }, new ItemDto
+            {
+                Price = item.Price,
+                Description = item.Description,
+                CreationDate = item.CreationDate,
+                ProductId = item.ProductId,
+                Id = item.Id
+            });
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateItemAsync(Guid id, UpdatedItemDto itemDto)
+        public async Task<ActionResult> UpdateItemAsync(string id, UpdatedItemDto itemDto)
         {
-            var existingItem = await itemRepository.GetItemAsync(id);
+            var existingItem= repository.AsQueryable<Item>().FirstOrDefault(x => x.Id == id);
 
-            if(existingItem is null)
+            if (existingItem is null)
             {
                 return NotFound();
             }
-            
-            Item updateItem = existingItem with
-            {
-                Name = itemDto.Name,
-                Price = itemDto.Price
-            };
 
-            await itemRepository.UpdateItemAsync(updateItem);
-            
+            existingItem.Price = itemDto.Price;
+            existingItem.Description = itemDto.Description;
+            existingItem.ProductId = itemDto.ProductId;
+
+
+            await repository.UpdateAsync(existingItem);
+
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteItemAsync(Guid id)
+        public async Task<ActionResult> DeleteItemAsync(string id)
         {
-            var existingItem = await itemRepository.GetItemAsync(id);
-            if(existingItem is null)
-            {   
+            var existingItem = repository.AsQueryable<Item>().FirstOrDefault(x => x.Id == id);
+
+            if (existingItem is null)
+            {
                 return NotFound();
             }
 
-            await itemRepository.DeleteItemAsync(existingItem);
+            await repository.DeleteAsync(existingItem);
 
             return NoContent();
         }

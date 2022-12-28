@@ -3,9 +3,8 @@
 namespace AthatyCore.Entities
 {
     //This entity is used to register users of the API
-    public record User
+    public record User : Collection
     {
-        public string Id { get; init; }
         public string FirstName { get; init; }
         public string LastName { get; init; }
         public string UserName { get; init; }

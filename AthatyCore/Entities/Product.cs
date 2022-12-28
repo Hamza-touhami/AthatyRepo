@@ -1,9 +1,16 @@
+using AthatyCore.DTOs;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace AthatyCore.Entities
 {
-    public record Product
+    public record Product : Collection
     {
-        public Guid Id {get;init;} //init is used for immutable properties
-        public string Name {get;init;} = null!;
-        public Guid CategoryId {get;init;}
+        [MaxLength(50)]
+        public string Name {get;set;}
+        [ForeignKey("category")]
+        public string CategoryId {get;set;}
+
+  
     }
 }

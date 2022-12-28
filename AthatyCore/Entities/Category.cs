@@ -1,9 +1,12 @@
+using AthatyCore.DTOs;
+using System.ComponentModel.DataAnnotations;
+
 namespace AthatyCore.Entities
 {
-    public record Category
+    public record Category : Collection
     {
-        public Guid Id {get;init;} //init is used for immutable properties
-        public string Name {get;init;} = null!;
-        public List<Product> Products {get;init;} = new List<Product>();
+        [MaxLength(50)] 
+        public string Name {get;set;} = null!;
+
     }
 }

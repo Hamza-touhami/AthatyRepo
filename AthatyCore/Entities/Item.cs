@@ -1,10 +1,20 @@
+using AthatyCore.DTOs;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace AthatyCore.Entities
 {
-    public record Item
+    public record Item : Collection
     {
-        public Guid Id {get;init;} //init is used for immutable properties
-        public string Name {get;init;} = null!;
-        public decimal Price {get;init;}
-        public DateTimeOffset CreationDate {get;init;}
+        [ForeignKey("productId")]
+        public string? ProductId {get;set;}
+        [MaxLength(150)]
+        public string Description {get;set;} = null!;
+        [Required]
+        [Column(TypeName = "decimal(6,2)")]
+        public decimal Price { get; set; }
+        public DateTimeOffset CreationDate {get;set;}
+
+    
     }
 }

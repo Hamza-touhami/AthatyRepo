@@ -6,13 +6,18 @@ using AthatyCore.Settings;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
+using AthatyCore.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
+
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnectionString");
 
 /* Dependencies Injection */
 // Add services to the container.
 builder.Services.AddCors();
-builder.Services.AddControllers(options => {
+builder.Services.AddControllers(options =>
+{
     options.SuppressAsyncSuffixInActionNames = false;
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -21,13 +26,16 @@ builder.Services.AddSwaggerGen();
 
 //Setting up MongoDB connection
 
-//Serializing GUID as string
-BsonSerializer.RegisterSerializer(new GuidSerializer(MongoDB.Bson.BsonType.String));
+//Serializing string as string
+//BsonSerializer.RegisterSerializer(new stringSerializer(MongoDB.Bson.BsonType.String));
 
 //Serializing DateTimeOffset as string
 BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(MongoDB.Bson.BsonType.String));
 
 var mongoDBSettings = builder.Configuration.GetSection(nameof(MongoDBSettings)).Get<MongoDBSettings>();
+
+//Registering DbContext dependency (Dependency Injection)
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
 //Registering IMongoClient dependency (Dependency Injection)
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
@@ -35,20 +43,22 @@ builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
     return new MongoClient(mongoDBSettings.ConnectionToken);
 });
 
-//Injecting Item Repository used for this API (MongoDBRepository)
+//Injecting Item Repository used for this API (SqlServerRepository)
+builder.Services.AddTransient<ICollectionRepository, SqlServerRepository>();
 
-builder.Services.AddSingleton<IItemRepository, MongoDBItemRepository>();
-builder.Services.AddSingleton<ICategoryRepository, MongoDBCategoryRepository>();
+//Injecting Item Repository used for this API (MongoDBRepository)
+//builder.Services.AddSingleton<ICollectionRepository, MongoDbRepository>();
+
+
 
 
 //Authentication services
-{
+
     //Configure strongly typed AuthenticationSettings
     builder.Services.Configure<AuthenticationSettings>(builder.Configuration.GetSection("AuthenticationSettings"));
 
     //Inject UserService service for authentication
     builder.Services.AddScoped<IUserService, UserService>();
-}
 
 var app = builder.Build();
 
@@ -63,8 +73,9 @@ if (app.Environment.IsDevelopment())
 
 //TEST
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 
-//app.UseAuthorization();
 // global cors policy
 app.UseCors(x => x
     .AllowAnyOrigin()

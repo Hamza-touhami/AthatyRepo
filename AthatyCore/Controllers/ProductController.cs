@@ -2,6 +2,7 @@ using AthatyCore.DTOs;
 using AthatyCore.Entities;
 using AthatyCore.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AthatyCore.Controllers
 {
@@ -9,81 +10,93 @@ namespace AthatyCore.Controllers
     [Route("products")]
     public class ProductController : ControllerBase
     {
-        private readonly ICategoryRepository categoryRepository;
+        private readonly ICollectionRepository repository;
 
-        public ProductController(ICategoryRepository categoryRepository)
+        public ProductController(ICollectionRepository repository)
         {
-            this.categoryRepository = categoryRepository;
+            this.repository = repository;
         }
 
         //GET /items
-        [HttpGet("{categoryId}")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsAsync(Guid categoryId)
+        [HttpGet()]
+        public IEnumerable<ProductDto> GetProductsAsync()
         {
-            var products = (await categoryRepository.GetProductsAsync(categoryId));
-            if(products is null)
-                return NotFound();
-            return AcceptedAtAction(nameof(GetProductsAsync), products.Select(product => product.AsDTO()));  
+            var products = repository.AsQueryable<Product>().Select(x => new ProductDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                CategoryId = x.CategoryId
+            });
+            return products;  
         }
 
         //GET /items/id=*******
-        [HttpGet("{categoryId}/{productId}")]
-        public async Task<ActionResult<ProductDto>> GetProductAsync(Guid categoryId, Guid productId)
+        [HttpGet("{id}")]
+        public ActionResult<ProductDto> GetProduct(string id)
         {
-            var product = (await categoryRepository.GetProductAsync(categoryId, productId));
-            if(product is null)
+            var product = repository.AsQueryable<Product>().FirstOrDefault(x => x.Id == id);
+            if (product is null)
                 return NotFound();
-            return product.AsDTO();
+            return new ProductDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                CategoryId = product.CategoryId
+            };
         }
 
         //POST /items
         //Here we return ItemDto although it's a post request, because it's a convention we send back the item that was created
        
         [HttpPost]
-        public async Task<ActionResult<CategoryDto>> CreateProductAsync(CreatedProductDto productDto)
+        public async Task<ActionResult<ProductDto>> CreateProductAsync(CreatedProductDto productDto)
         {
             Product product = new()
             {
                 Name = productDto.Name,
-                Id = Guid.NewGuid(),
                 CategoryId = productDto.CategoryId
             };
 
-            await categoryRepository.AddProductAsync(productDto.CategoryId, product);
+            await repository.AddAsync(product);
 
-            return CreatedAtAction(nameof(CreateProductAsync), new {id = product.Id}, product.AsDTO());
+            return CreatedAtAction(nameof(CreateProductAsync), new { id = product.Id }, new ProductDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                CategoryId = product.CategoryId
+            });
         }
 
-        [HttpPut("{categoryId}/{productId}")]
-        public async Task<ActionResult> UpdateProductAsync(Guid categoryId, Guid productId, UpdatedProductDto productDto)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateProductAsync(string id, UpdatedProductDto productDto)
         {
-            var existingProduct = await categoryRepository.GetProductAsync(categoryId, productId);
+  
+            var existingProduct = repository.AsQueryable<Product>().FirstOrDefault(x => x.Id == id);
 
-            if(existingProduct is null)
+            if (existingProduct is null)
             {
                 return NotFound();
             }
-            
-            Product updateProduct = existingProduct with
-            {
-                Name = productDto.Name,
-            };
 
-            await categoryRepository.UpdateProductAsync(categoryId, updateProduct);
-            
+            existingProduct.CategoryId = productDto.CategoryId;
+            existingProduct.Name = productDto.Name;
+
+            await repository.UpdateAsync(existingProduct);
+
             return NoContent();
         }
 
-        [HttpDelete("{categoryId}/{productId}")]
-        public async Task<ActionResult> DeleteProductAsync(Guid categoryId, Guid productId)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteProductAsync(string id)
         {
-            var existingProduct = await categoryRepository.GetProductAsync(categoryId, productId);
-            if(existingProduct is null)
+            var existingProduct = repository.AsQueryable<Product>().FirstOrDefault(x => x.Id == id);
+
+            if (existingProduct is null)
             {
                 return NotFound();
             }
 
-            await categoryRepository.DeleteProductAsync(categoryId, existingProduct);
+            await repository.DeleteAsync(existingProduct);
 
             return NoContent();
         }
