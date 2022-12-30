@@ -18,7 +18,7 @@ namespace AthatyCore.Controllers
         }
 
         //GET /items
-        [HttpGet()]
+        [HttpGet("getProducts")]
         public IEnumerable<ProductDto> GetProductsAsync()
         {
             var products = repository.AsQueryable<Product>().Select(x => new ProductDto
@@ -31,7 +31,7 @@ namespace AthatyCore.Controllers
         }
 
         //GET /items/id=*******
-        [HttpGet("{id}")]
+        [HttpGet("getProducts/{id}")]
         public ActionResult<ProductDto> GetProduct(string id)
         {
             var product = repository.AsQueryable<Product>().FirstOrDefault(x => x.Id == id);
@@ -45,9 +45,21 @@ namespace AthatyCore.Controllers
             };
         }
 
+        [HttpGet("getProductsByCategory/{categoryId}")]
+        public IEnumerable<ProductDto> GetProductsByCategory(string categoryId)
+        {
+            var products = repository.AsQueryable<Product>().Where(x => x.CategoryId == categoryId).Select(x => new ProductDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                CategoryId = x.CategoryId
+            });
+            return products;
+        }
+
         //POST /items
         //Here we return ItemDto although it's a post request, because it's a convention we send back the item that was created
-       
+
         [HttpPost]
         public async Task<ActionResult<ProductDto>> CreateProductAsync(CreatedProductDto productDto)
         {

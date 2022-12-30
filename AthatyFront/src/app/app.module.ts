@@ -6,6 +6,8 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
 import { AdsCarouselComponent } from './ads-carousel/ads-carousel.component';
 import { CategoryComponent } from './category/category.component';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -13,12 +15,16 @@ import { CategoryComponent } from './category/category.component';
     NavbarComponent,
     SearchBarComponent,
     AdsCarouselComponent,
-    CategoryComponent
+    CategoryComponent,
+    
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HttpClientModule,
+    FormsModule
   ],
-  providers: [],
+  providers: [
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

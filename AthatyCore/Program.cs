@@ -44,13 +44,10 @@ builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
 });
 
 //Injecting Item Repository used for this API (SqlServerRepository)
-builder.Services.AddTransient<ICollectionRepository, SqlServerRepository>();
+//builder.Services.AddTransient<ICollectionRepository, SqlServerRepository>();
 
 //Injecting Item Repository used for this API (MongoDBRepository)
-//builder.Services.AddSingleton<ICollectionRepository, MongoDbRepository>();
-
-
-
+builder.Services.AddSingleton<ICollectionRepository, MongoDbRepository>();
 
 //Authentication services
 

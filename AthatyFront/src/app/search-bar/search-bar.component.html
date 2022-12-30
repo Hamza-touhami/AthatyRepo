@@ -2,17 +2,18 @@
     <div class="col-lg-8 container-fluid">
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <input type="text" class="form-control me-2" placeholder="Que recherchez-vous ?" >
-            <select class="form-select me-2" aria-label="Default select example">
-                <option selected>Chosissez la catégorie</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+            
+              <select #categorySelect (change)="onCategorySelected(categorySelect.value)" class="form-select me-2" aria-label="Default select example" [(ngModel)]="selectedCategory">
+                <option [value]="null">Chosissez la catégorie</option>
+                <option *ngFor="let category of categories"  [value]="category.Id">{{category.Name}}</option>
+              </select>
+              <select  *ngIf="selectedCategory !== 'null'" class="form-select me-2" aria-label="Default select example" [(ngModel)]="selectedProduct">
+                <option [value]="null">Chosissez le produit</option>
+                <option *ngFor="let product of products"  [value]="product.Name">{{product.Name}}</option>
               </select>
               <select class="form-select me-2" aria-label="Default select example" placeholder="">
-                <option selected>Chosissez la ville</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+                <option [value]="null">Chosissez la ville</option>
+                <option *ngFor="let city of cities" [value]="city">{{city}}</option>
               </select>
               <form class="d-flex">
                   <button class="btn primary-color" type="submit">Search</button>

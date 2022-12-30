@@ -18,7 +18,7 @@ namespace AthatyCore.Controllers
         }
 
         //GET /items
-        [HttpGet]
+        [HttpGet("getCategories")]
         public IEnumerable<CategoryDto> GetCategoriesAsync()
         {
             var categories = repository.AsQueryable<Category>().Select(x => new CategoryDto

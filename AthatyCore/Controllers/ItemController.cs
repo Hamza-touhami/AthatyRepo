@@ -18,7 +18,7 @@ namespace AthatyCore.Controllers
         }
 
         //GET /items
-        [HttpGet]
+        [HttpGet("getItems")]
         public IEnumerable<ItemDto> GetItemsAsync()
         {
             var items = repository.AsQueryable<Item>().Select(x => new ItemDto
@@ -26,6 +26,8 @@ namespace AthatyCore.Controllers
                 Price = x.Price,
                 Description = x.Description,
                 CreationDate = x.CreationDate,
+                ProductId = x.ProductId,
+                Address = x.Address,
                 Id = x.Id
             });
             return items;
@@ -44,7 +46,9 @@ namespace AthatyCore.Controllers
                 Price = item.Price,
                 Description = item.Description,
                 CreationDate = item.CreationDate,
-                Id = item.Id
+                Id = item.Id,
+                Address = item.Address,
+                ProductId = item.ProductId
             };
         }
 
@@ -58,7 +62,8 @@ namespace AthatyCore.Controllers
             {
                 Price = itemDto.Price,
                 Description = itemDto.Description,
-                ProductId = itemDto.ProductId
+                ProductId = itemDto.ProductId,
+                Address = itemDto.Address
             };
 
             await repository.AddAsync(item);
@@ -106,6 +111,15 @@ namespace AthatyCore.Controllers
             await repository.DeleteAsync(existingItem);
 
             return NoContent();
+        }
+
+        [HttpGet("getCities")]
+        public IEnumerable<string> GetCities()
+        {
+            var cities = repository.AsQueryable<Item>()
+                ?.Select(x => x.Address.City)?.Where(x => !string.IsNullOrEmpty(x)).Distinct();
+
+            return cities;
         }
         
     }
