@@ -1,0 +1,6 @@
+<h5 class="align-self-center">Categories</h5>
+        <div class="row">
+            <div *ngFor="let item of categories | async" class="col">
+                    <app-category [categ]="item"></app-category>
+            </div>
+        </div>
