@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/cbb989ad-ec09-46ee-8e41-201ea3d72a72/resourceGroups/AthatyFE/providers/Microsoft.Web/sites/AthatyFront",
+    "appService.deploySubpath": "."
+}

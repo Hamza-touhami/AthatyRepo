@@ -14,7 +14,7 @@ export class CategoryService {
         this.baseUrl = environment.apiBaseUrl + "/categories";
     }
 
-    getCategories() {
+    public getCategories() {
         return this.http.get<Category[]>(this.baseUrl + "/getCategories");
     }
 

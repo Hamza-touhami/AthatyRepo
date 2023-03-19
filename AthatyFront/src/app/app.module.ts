@@ -8,6 +8,8 @@ import { AdsCarouselComponent } from './ads-carousel/ads-carousel.component';
 import { CategoryComponent } from './category/category.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { CategoriesComponent } from './categories/categories.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -16,12 +18,14 @@ import { FormsModule } from '@angular/forms';
     SearchBarComponent,
     AdsCarouselComponent,
     CategoryComponent,
+    CategoriesComponent,
     
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule
   ],
   providers: [
   ],

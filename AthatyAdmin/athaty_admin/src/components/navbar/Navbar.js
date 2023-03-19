@@ -16,7 +16,7 @@ export default class Navbar extends Component {
               <i className="fas fa-tachometer-alt fa-fw me-3"></i><span>Main dashboard</span>
             </a>
             <a href="#" className="list-group-item list-group-item-action py-2 ripple active">
-              <i className="fas fa-chart-area fa-fw me-3"></i><span>Webiste traffic</span>
+              <i className="fas fa-chart-area fa-fw me-3"></i><span>Categories</span>
             </a>
             <a href="#" className="list-group-item list-group-item-action py-2 ripple"
               ><i className="fas fa-lock fa-fw me-3"></i><span>Password</span></a

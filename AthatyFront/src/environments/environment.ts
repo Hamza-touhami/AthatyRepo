@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiBaseUrl: "https://athaty.azurewebsites.net"
+  apiBaseUrl: "https://localhost:7042"
 };
 
 /*
