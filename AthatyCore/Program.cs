@@ -35,12 +35,12 @@ BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(MongoDB.Bson.Bson
 var mongoDBSettings = builder.Configuration.GetSection(nameof(MongoDBSettings)).Get<MongoDBSettings>();
 
 //Registering DbContext dependency (Dependency Injection)
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+//builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
 //Registering IMongoClient dependency (Dependency Injection)
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
 {
-    return new MongoClient(mongoDBSettings.ConnectionToken);
+    return new MongoClient(connectionString);
 });
 
 //Injecting Item Repository used for this API (SqlServerRepository)

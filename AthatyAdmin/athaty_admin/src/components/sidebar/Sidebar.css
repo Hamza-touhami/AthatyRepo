@@ -1,0 +1,31 @@
+/* Sidebar.css */
+
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgb(13, 65, 148);
+    padding-top: 20px;
+    color: white;
+  }
+  
+  .sidebar h2 {
+    text-align: center;
+  }
+  
+  .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    padding: 8px;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+  .sidebar li:hover {
+    background-color: rgb(13, 34, 167);
+  }

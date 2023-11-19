@@ -8,6 +8,8 @@ namespace AthatyCore.Entities
     {
         [ForeignKey("productId")]
         public string? ProductId {get;set;}
+        [MaxLength(50)]
+         public string Title { get; set; } = null!;
         [MaxLength(150)]
         public string Description {get;set;} = null!;
         [Required]
@@ -15,8 +17,6 @@ namespace AthatyCore.Entities
         public decimal Price { get; set; }
         public DateTimeOffset CreationDate {get;set;}
         public AddressInfo Address { get; set; } = null!;
-        
-
-    
+        public List<Image> Images {get; set;} = null!;
     }
 }

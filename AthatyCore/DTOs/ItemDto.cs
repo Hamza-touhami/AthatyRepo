@@ -7,6 +7,8 @@ namespace AthatyCore.DTOs
     {
         [JsonPropertyName("Id")]
         public string Id { get; init; } = null!;
+        [JsonPropertyName("Title")]
+        public string Title { get;init;} = null!;
         [JsonPropertyName("Description")]
         public string Description { get;init;} = null!;
         [JsonPropertyName("Price")]
@@ -17,5 +19,8 @@ namespace AthatyCore.DTOs
         public string ProductId { get; init; } = null!;
         [JsonPropertyName("Address")]
         public AddressInfo Address { get; init; } = null!;
+        [JsonPropertyName("Images")]
+        public List<Image> Images {get; init;} = null!;
+
     }
 }

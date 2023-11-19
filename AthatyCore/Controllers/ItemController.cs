@@ -23,6 +23,8 @@ namespace AthatyCore.Controllers
         {
             var items = repository.AsQueryable<Item>().Select(x => new ItemDto
             {
+                Images= x.Images,
+                Title= x.Title,
                 Price = x.Price,
                 Description = x.Description,
                 CreationDate = x.CreationDate,
@@ -43,12 +45,14 @@ namespace AthatyCore.Controllers
 
             return new ItemDto
             {
+                Title= item.Title,
                 Price = item.Price,
                 Description = item.Description,
                 CreationDate = item.CreationDate,
                 Id = item.Id,
                 Address = item.Address,
-                ProductId = item.ProductId
+                ProductId = item.ProductId,
+                Images= item.Images
             };
         }
 
@@ -60,10 +64,12 @@ namespace AthatyCore.Controllers
         {
             Item item = new()
             {
+                Title= itemDto.Title,
                 Price = itemDto.Price,
                 Description = itemDto.Description,
                 ProductId = itemDto.ProductId,
-                Address = itemDto.Address
+                Address = itemDto.Address,
+                Images= itemDto.Images
             };
 
             await repository.AddAsync(item);
@@ -74,7 +80,8 @@ namespace AthatyCore.Controllers
                 Description = item.Description,
                 CreationDate = item.CreationDate,
                 ProductId = item.ProductId,
-                Id = item.Id
+                Id = item.Id,
+                Images= item.Images
             });
         }
 
@@ -88,10 +95,11 @@ namespace AthatyCore.Controllers
                 return NotFound();
             }
 
+            existingItem.Title = itemDto.Title;
             existingItem.Price = itemDto.Price;
             existingItem.Description = itemDto.Description;
             existingItem.ProductId = itemDto.ProductId;
-
+            existingItem.Images = itemDto.Images;
 
             await repository.UpdateAsync(existingItem);
 

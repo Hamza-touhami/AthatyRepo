@@ -1,6 +1,6 @@
 import './App.css';
 import Api from './components/api/Api';
-import Navbar from './components/navbar/Navbar';
+import Sidebar from './components/sidebar/Sidebar';
 
 function App() {
 
@@ -10,9 +10,7 @@ function App() {
   })
   
   return (
-    <div>
-       <Navbar />
-    </div>
+       <Sidebar />
   );
 }
 
